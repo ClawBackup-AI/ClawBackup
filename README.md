@@ -28,12 +28,7 @@ ClawBackup is an OpenClaw plugin that provides enhanced backup and recovery capa
 
 ## 🚀 Installation
 
-```bash
-# Install via OpenClaw CLI
-openclaw plugins install clawbackup-plugin
-```
-
-Or install from source:
+install from source:
 
 ```bash
 # Clone the repository
