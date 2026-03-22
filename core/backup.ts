@@ -1076,14 +1076,7 @@ export async function syncBackup(
     const result = await targetStorage.putStream(remoteKey, entry.storagePath);
     remotePath = typeof result === "string" ? result : `s3://${targetBackendId}/${remoteKey}`;
   } else {
-    const backupData = await localStorage.get(entry.storagePath);
-    if (!backupData) {
-      return {
-        success: false,
-        backupId,
-        error: "Backup data not found",
-      };
-    }
+    const backupData = await fs.readFile(entry.storagePath);
     remotePath = await targetStorage.put(remoteKey, backupData);
   }
 
@@ -1125,9 +1118,8 @@ export async function deleteBackup(
 
   const entry = index.backups[entryIndex];
   
-  const storage = new LocalStorageBackend(backupDir);
-  await storage.delete(entry.storagePath);
-  await storage.delete(`${backupId}.manifest.json`);
+  await fs.unlink(entry.storagePath).catch(() => {});
+  await fs.unlink(path.join(backupDir, `${backupId}.manifest.json`)).catch(() => {});
 
   if (entry.remoteSync) {
     logger.info(`Deleting remote copy: ${entry.remoteSync.storagePath}`);
