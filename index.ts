@@ -468,7 +468,7 @@ const ClawBackupPlugin: OpenClawPluginDefinition = {
           .option("--json", "JSON format output")
           .action(async (id: string, options: { target?: string; password?: string; snapshot?: boolean; fromRemote?: string; json?: boolean }) => {
             const { restoreBackupCommand } = await import("./commands/restore.js");
-            await restoreBackupCommand(id, options, { config, logger, stateDir: resolveStateDir(), agentDir: cliCtx.workspaceDir || "" });
+            await restoreBackupCommand(id, options, { config, logger, stateDir: resolveStateDir() });
           });
 
         root

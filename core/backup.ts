@@ -171,7 +171,6 @@ export interface RestoreBackupOptions {
   password?: string;
   createSnapshot?: boolean;
   stateDir: string;
-  agentDir?: string;
   fromRemote?: string;
 }
 
@@ -770,7 +769,7 @@ export async function restoreBackup(
   options: RestoreBackupOptions,
   ctx: { config: OpenClawConfig; logger: PluginLogger },
 ): Promise<RestoreBackupResult> {
-  const { backupId, targetPath, password, createSnapshot, stateDir, agentDir, fromRemote } = options;
+  const { backupId, targetPath, password, createSnapshot, stateDir, fromRemote } = options;
   const { config, logger } = ctx;
 
   logger.info(`Restoring backup: ${backupId}`);
@@ -868,7 +867,7 @@ export async function restoreBackup(
     throw new Error(`Backup "${backupId}" is encrypted, please provide decryption password (--password option)`);
   }
 
-  const target = path.resolve(targetPath || agentDir || path.join(os.homedir(), OPENCLAW_DIR_NAME));
+  const target = path.resolve(targetPath || path.join(os.homedir(), OPENCLAW_DIR_NAME));
 
   const parentDir = path.dirname(target);
   try {

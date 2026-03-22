@@ -12,10 +12,10 @@ export interface RestoreCommandOptions {
 export async function restoreBackupCommand(
   id: string,
   options: RestoreCommandOptions,
-  ctx: { config: OpenClawConfig; logger: PluginLogger; stateDir: string; agentDir?: string },
+  ctx: { config: OpenClawConfig; logger: PluginLogger; stateDir: string },
 ): Promise<void> {
   const { target, password, snapshot, fromRemote, json } = options;
-  const { config, logger, stateDir, agentDir } = ctx;
+  const { config, logger, stateDir } = ctx;
 
   try {
     logger.info(`Restoring backup: ${id}`);
@@ -27,7 +27,6 @@ export async function restoreBackupCommand(
       createSnapshot: !!snapshot,
       fromRemote,
       stateDir,
-      agentDir,
     };
 
     const result = await restoreBackup(restoreOptions, { config, logger });
