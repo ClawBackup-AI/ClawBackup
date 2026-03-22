@@ -8,10 +8,27 @@ export class LocalStorageBackend implements StorageBackendInterface {
   private basePath: string;
 
   constructor(basePath: string) {
-    this.basePath = basePath;
+    this.basePath = path.resolve(basePath);
+  }
+
+  private validateKey(key: string): void {
+    if (path.isAbsolute(key)) {
+      throw new Error(`Invalid key: absolute paths are not allowed`);
+    }
+
+    const normalized = path.normalize(key);
+    if (normalized.startsWith("..")) {
+      throw new Error(`Invalid key: path traversal detected`);
+    }
+
+    const resolved = path.resolve(this.basePath, key);
+    if (!resolved.startsWith(this.basePath + path.sep) && resolved !== this.basePath) {
+      throw new Error(`Invalid key: path escapes storage directory`);
+    }
   }
 
   async put(key: string, data: Buffer): Promise<string> {
+    this.validateKey(key);
     const filePath = path.join(this.basePath, key);
     await fs.mkdir(path.dirname(filePath), { recursive: true });
     await fs.writeFile(filePath, data);
@@ -19,6 +36,7 @@ export class LocalStorageBackend implements StorageBackendInterface {
   }
 
   async putStream(key: string, sourcePath: string): Promise<boolean> {
+    this.validateKey(key);
     const targetPath = path.join(this.basePath, key);
     await fs.mkdir(path.dirname(targetPath), { recursive: true });
     const readStream = createReadStream(sourcePath);
@@ -28,13 +46,7 @@ export class LocalStorageBackend implements StorageBackendInterface {
   }
 
   async get(key: string): Promise<Buffer | null> {
-    if (path.isAbsolute(key)) {
-      try {
-        return await fs.readFile(key);
-      } catch {
-        return null;
-      }
-    }
+    this.validateKey(key);
     const filePath = path.join(this.basePath, key);
     try {
       return await fs.readFile(filePath);
@@ -44,12 +56,8 @@ export class LocalStorageBackend implements StorageBackendInterface {
   }
 
   async getStream(key: string, targetPath: string): Promise<boolean> {
-    let sourcePath: string;
-    if (path.isAbsolute(key)) {
-      sourcePath = key;
-    } else {
-      sourcePath = path.join(this.basePath, key);
-    }
+    this.validateKey(key);
+    const sourcePath = path.join(this.basePath, key);
     try {
       await fs.access(sourcePath);
     } catch {
@@ -76,10 +84,7 @@ export class LocalStorageBackend implements StorageBackendInterface {
   }
 
   async delete(key: string): Promise<void> {
-    if (path.isAbsolute(key)) {
-      await fs.unlink(key).catch(() => {});
-      return;
-    }
+    this.validateKey(key);
     const filePath = path.join(this.basePath, key);
     await fs.unlink(filePath).catch(() => {});
   }

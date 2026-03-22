@@ -48,9 +48,6 @@ async function publishTempArchive(params: {
       await fs.copyFile(params.tempArchivePath, params.outputPath, fsConstants.COPYFILE_EXCL);
     } catch (copyErr) {
       const copyCode = (copyErr as NodeJS.ErrnoException | undefined)?.code;
-      if (copyCode !== "EEXIST") {
-        await fs.rm(params.outputPath, { force: true }).catch(() => undefined);
-      }
       if (copyCode === "EEXIST") {
         throw new Error(`Refusing to overwrite existing backup file: ${params.outputPath}`, { cause: copyErr });
       }
