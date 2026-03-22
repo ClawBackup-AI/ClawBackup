@@ -8,7 +8,6 @@ Thank you for considering contributing to ClawBackup!
 - [How to Contribute](#how-to-contribute)
 - [Development Setup](#development-setup)
 - [Code Standards](#code-standards)
-- [Version Management](#version-management)
 - [Pull Request Process](#pull-request-process)
 - [License](#license)
 
@@ -73,133 +72,7 @@ npm run build
 - Follow existing code style
 - Add necessary tests
 - Update related documentation
-- Write clear commit messages
-
-## Version Management
-
-We follow [Semantic Versioning 2.0.0](https://semver.org/).
-
-### Version Format
-
-```
-MAJOR.MINOR.PATCH[-PRERELEASE][+BUILD]
-```
-
-- **MAJOR**: Incompatible API changes
-- **MINOR**: Backwards-compatible new features
-- **PATCH**: Backwards-compatible bug fixes
-- **PRERELEASE**: Pre-release versions (alpha, beta, rc)
-- **BUILD**: Build metadata
-
-### Version Bump Rules
-
-| Change Type | Version Bump | Example |
-|-------------|--------------|---------|
-| Breaking API change | MAJOR | 1.0.0 → 2.0.0 |
-| New feature (compatible) | MINOR | 1.0.0 → 1.1.0 |
-| Bug fix (compatible) | PATCH | 1.0.0 → 1.0.1 |
-| Alpha release | PRERELEASE | 1.0.0 → 1.1.0-alpha.1 |
-| Beta release | PRERELEASE | 1.1.0-alpha.1 → 1.1.0-beta.1 |
-| Release candidate | PRERELEASE | 1.1.0-beta.1 → 1.1.0-rc.1 |
-| Stable release | Remove PRERELEASE | 1.1.0-rc.1 → 1.1.0 |
-
-### Release Workflow
-
-1. **Development Phase**
-   - Develop on `develop` branch
-   - Use feature branches for new features
-   - Merge to `develop` via PR
-
-2. **Release Preparation**
-   - Create release branch `release/vX.Y.Z`
-   - Update version in `package.json`
-   - Update `CHANGELOG.md`
-   - Run full test suite
-   - Update documentation
-
-3. **Release**
-   - Merge release branch to `master`
-   - Tag the release: `git tag -a vX.Y.Z -m "Release vX.Y.Z"`
-   - Push tag to GitHub
-   - Publish to npm
-   - Create GitHub Release with release notes
-
-4. **Post-Release**
-   - Merge `master` back to `develop`
-   - Close related issues
-
-### Pre-release Versions
-
-Pre-release versions follow this naming convention:
-
-- `X.Y.Z-alpha.N` - Internal testing, unstable API
-- `X.Y.Z-beta.N` - Public testing, feature complete
-- `X.Y.Z-rc.N` - Release candidate, ready for production
-
-### Branch Strategy
-
-```
-master (stable releases)
-  │
-  ├── release/v1.0.0
-  │
-develop (integration)
-  │
-  ├── feature/backup-encryption
-  ├── feature/s3-storage
-  └── fix/restore-bug
-```
-
-- **master**: Production-ready code, only accepts merges from release branches
-- **develop**: Integration branch for features
-- **feature/***: New features
-- **fix/***: Bug fixes
-- **release/***: Release preparation
-- **hotfix/***: Emergency fixes for production
-
-### Commit Message Convention
-
-We follow [Conventional Commits](https://www.conventionalcommits.org/):
-
-```
-<type>(<scope>): <description>
-
-[optional body]
-
-[optional footer(s)]
-```
-
-**Types:**
-
-| Type | Description | Version Impact |
-|------|-------------|----------------|
-| `feat` | New feature | MINOR |
-| `fix` | Bug fix | PATCH |
-| `docs` | Documentation only | None |
-| `style` | Code style (formatting) | None |
-| `refactor` | Code refactoring | None |
-| `perf` | Performance improvement | PATCH |
-| `test` | Adding/updating tests | None |
-| `chore` | Build/tooling changes | None |
-| `ci` | CI configuration | None |
-| `revert` | Revert previous commit | Varies |
-| `breaking` | Breaking change | MAJOR |
-
-**Examples:**
-
-```bash
-# Feature
-feat(backup): add compression support
-
-# Bug fix
-fix(restore): resolve path traversal vulnerability
-
-# Breaking change
-feat(api)!: change backup options interface
-
-# With scope
-docs(readme): update installation instructions
-```
+- Write clear commit messages (see [VERSIONING.md](VERSIONING.md#commit-message-convention))
 
 ## Pull Request Process
 
@@ -226,6 +99,10 @@ docs(readme): update installation instructions
 5. **After Approval**
    - Squash commits if needed
    - Maintainer will merge
+
+## Version Management
+
+For version management, release workflow, and commit conventions, see [VERSIONING.md](VERSIONING.md).
 
 ## License
 
