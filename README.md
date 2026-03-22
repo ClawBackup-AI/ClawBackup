@@ -28,17 +28,15 @@ ClawBackup is an OpenClaw plugin that provides enhanced backup and recovery capa
 
 ## 🚀 Installation
 
-ClawBackup runs as an OpenClaw plugin and requires OpenClaw to be installed first.
-
 ```bash
-# Install OpenClaw
-npm install -g openclaw@latest
+# Clone the repository
+git clone https://github.com/ClawBackup-AI/ClawBackup.git
+cd ClawBackup
 
-# Install plugin in OpenClaw configuration directory
-cd ~/.openclaw/workspace/skills
-git clone https://github.com/ClawBackup-AI/ClawBackup clawbackup
-cd clawbackup
+# Install dependencies
 npm install
+
+# Build
 npm run build
 ```
 
