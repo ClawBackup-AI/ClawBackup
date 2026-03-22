@@ -8,7 +8,7 @@ import { S3StorageBackend, type S3StorageConfig } from "./storage/s3.js";
 
 import { getPluginConfig } from "./config.js";
 
-import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
+import { S3Client, HeadBucketCommand } from "@aws-sdk/client-s3";
 
 const DEFAULT_BACKUP_DIR_NAME = "clawbackups";
 const BACKENDS_CONFIG_FILE_NAME = "backends.json";
@@ -34,28 +34,30 @@ function getEncryptionKeyFile(stateDir: string): string {
   return path.join(getBackupDir(stateDir), ENCRYPTION_KEY_FILE_NAME);
 }
 
-let cachedEncryptionKey: string | null = null;
+const encryptionKeyCache = new Map<string, string>();
 
 async function getEncryptionKey(stateDir: string): Promise<string> {
-  if (cachedEncryptionKey) {
-    return cachedEncryptionKey;
+  const cached = encryptionKeyCache.get(stateDir);
+  if (cached) {
+    return cached;
   }
   const envKey = process.env[ENCRYPTION_KEY_ENV];
   if (envKey) {
-    cachedEncryptionKey = envKey;
+    encryptionKeyCache.set(stateDir, envKey);
     return envKey;
   }
   const keyFile = getEncryptionKeyFile(stateDir);
   try {
     const savedKey = await fs.readFile(keyFile, "utf8");
-    cachedEncryptionKey = savedKey.trim();
-    return cachedEncryptionKey!;
+    const key = savedKey.trim();
+    encryptionKeyCache.set(stateDir, key);
+    return key;
   } catch {
     const newKey = crypto.randomBytes(KEY_LENGTH).toString("hex");
     const backupDir = getBackupDir(stateDir);
     await fs.mkdir(backupDir, { recursive: true });
     await fs.writeFile(keyFile, newKey, { mode: 0o600 });
-    cachedEncryptionKey = newKey;
+    encryptionKeyCache.set(stateDir, newKey);
     return newKey;
   }
 }
@@ -240,7 +242,7 @@ async function testS3Connection(config: Record<string, unknown>): Promise<void> 
       secretAccessKey,
     },
   });
-  await client.send(new ListBucketsCommand({ Bucket: bucket }));
+  await client.send(new HeadBucketCommand({ Bucket: bucket }));
 }
 export async function removeStorageBackend(
   backendId: string,

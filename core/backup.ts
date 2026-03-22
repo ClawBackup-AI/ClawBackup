@@ -462,23 +462,28 @@ async function createDecipherStream(
   password: string,
 ): Promise<{ stream: NodeJS.ReadableStream; headerSize: number }> {
   const fd = await fs.open(inputPath, "r");
-  const headerBuffer = Buffer.alloc(32);
-  await fd.read(headerBuffer, 0, 32, 0);
-  const salt = headerBuffer.subarray(0, 16);
-  const iv = headerBuffer.subarray(16, 32);
-  const key = crypto.pbkdf2Sync(
-    Buffer.from(password, "utf8"),
-    salt,
-    100000,
-    32,
-    "sha256",
-  );
-  const decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
-  const encryptedStream = createReadStream(inputPath, { start: 32 });
-  encryptedStream.on("close", () => {
-    fd.close().catch(() => {});
-  });
-  return { stream: encryptedStream.pipe(decipher), headerSize: 32 };
+  try {
+    const headerBuffer = Buffer.alloc(32);
+    await fd.read(headerBuffer, 0, 32, 0);
+    const salt = headerBuffer.subarray(0, 16);
+    const iv = headerBuffer.subarray(16, 32);
+    const key = crypto.pbkdf2Sync(
+      Buffer.from(password, "utf8"),
+      salt,
+      100000,
+      32,
+      "sha256",
+    );
+    const decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
+    const encryptedStream = createReadStream(inputPath, { start: 32 });
+    encryptedStream.on("close", () => {
+      fd.close().catch(() => {});
+    });
+    return { stream: encryptedStream.pipe(decipher), headerSize: 32 };
+  } catch (err) {
+    await fd.close();
+    throw err;
+  }
 }
 
 export async function createBackup(

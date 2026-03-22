@@ -9,7 +9,7 @@ import {
   CompleteMultipartUploadCommand,
   AbortMultipartUploadCommand,
 } from "@aws-sdk/client-s3";
-import { createReadStream, statSync } from "node:fs";
+import { createReadStream } from "node:fs";
 import * as fs from "node:fs/promises";
 import type { StorageBackendInterface } from "../types.js";
 
@@ -104,7 +104,7 @@ export class S3StorageBackend implements StorageBackendInterface {
 
   async putStream(key: string, filePath: string): Promise<boolean> {
     const objectKey = this.getObjectKey(key);
-    const stats = statSync(filePath);
+    const stats = await fs.stat(filePath);
     const fileSize = stats.size;
 
     if (fileSize <= this.partSize) {
