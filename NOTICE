@@ -1,0 +1,33 @@
+ClawBackup - Enhanced Backup Plugin for OpenClaw
+Copyright 2024-2026 ClawBackup Team
+
+This product is licensed under the Apache License, Version 2.0.
+
+=== DISCLAIMER ===
+
+THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+=== IMPORTANT NOTICE FOR USERS ===
+
+This software is designed to backup and restore data. While we strive to make
+it as reliable as possible, data backup and recovery operations inherently
+carry risks. 
+
+BY USING THIS SOFTWARE, YOU ACKNOWLEDGE AND AGREE THAT:
+
+1. You are solely responsible for verifying the integrity of your backups.
+2. You should test backup restoration procedures before relying on them.
+3. We are NOT responsible for any data loss, corruption, or damage that may
+   occur during backup, restoration, or any other operation performed by this
+   software.
+4. You should maintain multiple backup copies in different locations.
+5. This software is provided without any guarantee of support or maintenance.
+
+For the full license terms, see the LICENSE file or visit:
+http://www.apache.org/licenses/LICENSE-2.0

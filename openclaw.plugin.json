@@ -1,0 +1,148 @@
+{
+  "id": "clawbackup",
+  "name": "ClawBackup",
+  "description": "Enhanced backup plugin - supports encryption, cloud storage, and cross-device recovery",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "author": "ClawBackup Team",
+  "license": "Apache-2.0",
+  "homepage": "https://clawbackup.com",
+  "repository": "https://github.com/ClawBackup-AI/ClawBackup",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "defaultStorage": {
+        "type": "string",
+        "description": "Default storage backend",
+        "default": "local"
+      },
+      "encryption": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable encryption"
+          },
+          "algorithm": {
+            "type": "string",
+            "default": "AES-256-CBC",
+            "description": "Encryption algorithm"
+          }
+        }
+      },
+      "autoBackup": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable automatic backup"
+          },
+          "schedule": {
+            "type": "string",
+            "default": "0 2 * * *",
+            "description": "Scheduled backup plan (cron format)"
+          }
+        }
+      }
+    }
+  },
+  "uiHints": {
+    "defaultStorage": {
+      "label": "Default Storage",
+      "help": "Select the default storage location for backups",
+      "sensitive": false
+    },
+    "encryption.enabled": {
+      "label": "Enable Encryption",
+      "help": "Backups will be encrypted when enabled",
+      "sensitive": false
+    },
+    "autoBackup.enabled": {
+      "label": "Automatic Backup",
+      "help": "Automatically create backups on schedule",
+      "sensitive": false
+    }
+  },
+  "commands": [
+    {
+      "name": "create",
+      "description": "Create backup"
+    },
+    {
+      "name": "restore",
+      "description": "Restore backup"
+    },
+    {
+      "name": "list",
+      "description": "List backups"
+    },
+    {
+      "name": "sync",
+      "description": "Sync backup to remote"
+    },
+    {
+      "name": "delete",
+      "description": "Delete backup"
+    },
+    {
+      "name": "verify",
+      "description": "Verify backup"
+    },
+    {
+      "name": "status",
+      "description": "Backup status overview"
+    },
+    {
+      "name": "backends",
+      "description": "Storage backend management"
+    },
+    {
+      "name": "backends add",
+      "description": "Add storage backend"
+    },
+    {
+      "name": "backends remove",
+      "description": "Remove storage backend"
+    },
+    {
+      "name": "init",
+      "description": "Initialize ClawBackup configuration"
+    }
+  ],
+  "tools": [
+    {
+      "name": "backup_create",
+      "description": "Create OpenClaw data backup"
+    },
+    {
+      "name": "backup_restore",
+      "description": "Restore backup"
+    },
+    {
+      "name": "backup_list",
+      "description": "List all backups"
+    },
+    {
+      "name": "backup_sync",
+      "description": "Sync backup to remote storage"
+    },
+    {
+      "name": "backup_delete",
+      "description": "Delete backup"
+    },
+    {
+      "name": "backup_verify",
+      "description": "Verify backup integrity"
+    },
+    {
+      "name": "backup_status",
+      "description": "Get backup status overview"
+    }
+  ],
+  "hooks": [
+    "session_start",
+    "session_end"
+  ]
+}
