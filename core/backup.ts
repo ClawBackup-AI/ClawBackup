@@ -911,7 +911,7 @@ export async function restoreBackup(
   const tar = await import("tar");
   const { pipeline } = await import("node:stream/promises");
 
-  const userSpecifiedTarget = !!targetPath || !!agentDir;
+  const userSpecifiedTarget = !!targetPath;
   
   let stripComponents = 0;
   if (userSpecifiedTarget && manifest.assets.length > 0) {

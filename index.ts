@@ -238,7 +238,6 @@ const ClawBackupPlugin: OpenClawPluginDefinition = {
       execute: async (_toolCallId: string, params: Record<string, unknown>) => {
         ensureServiceReady();
         const { backup_id, target, password } = params;
-        const agentDir = ctx.agentDir || defaultAgentDir;
         try {
           const result = await restoreBackup(
             {
@@ -246,7 +245,6 @@ const ClawBackupPlugin: OpenClawPluginDefinition = {
               targetPath: target as string | undefined,
               password: password as string | undefined,
               stateDir: serviceStateDir,
-              agentDir,
             },
             { config: ctx.config!, logger: console }
           );
@@ -444,7 +442,7 @@ const ClawBackupPlugin: OpenClawPluginDefinition = {
               name, 
               ...options,
               includeWorkspace: !options.noWorkspace,
-            }, { config, logger, stateDir: resolveStateDir(), agentDir: cliCtx.workspaceDir || "" });
+            }, { config, logger, stateDir: resolveStateDir() });
           });
 
         root

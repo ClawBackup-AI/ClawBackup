@@ -16,7 +16,7 @@ export interface CreateCommandOptions {
 
 export async function createBackupCommand(
   options: CreateCommandOptions,
-  ctx: { config: OpenClawConfig; logger: PluginLogger; stateDir: string; agentDir?: string },
+  ctx: { config: OpenClawConfig; logger: PluginLogger; stateDir: string },
 ): Promise<void> {
   const { 
     name, 
