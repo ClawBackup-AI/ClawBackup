@@ -38,6 +38,20 @@ npm install
 
 # 构建
 npm run build
+
+# 安装为 OpenClaw 插件
+# 将构建好的插件复制到 OpenClaw skills 目录
+cp -r . ~/.openclaw/workspace/skills/clawbackup
+```
+
+或直接安装到 OpenClaw：
+
+```bash
+cd ~/.openclaw/workspace/skills
+git clone https://github.com/ClawBackup-AI/ClawBackup clawbackup
+cd clawbackup
+npm install
+npm run build
 ```
 
 ## 📖 快速开始

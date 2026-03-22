@@ -38,6 +38,20 @@ npm install
 
 # Build
 npm run build
+
+# Install as OpenClaw plugin
+# Copy the built plugin to OpenClaw skills directory
+cp -r . ~/.openclaw/workspace/skills/clawbackup
+```
+
+Or install directly to OpenClaw:
+
+```bash
+cd ~/.openclaw/workspace/skills
+git clone https://github.com/ClawBackup-AI/ClawBackup clawbackup
+cd clawbackup
+npm install
+npm run build
 ```
 
 ## 📖 Quick Start
