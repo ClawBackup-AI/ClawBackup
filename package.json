@@ -1,5 +1,5 @@
 {
-  "name": "clawbackup-plugin",
+  "name": "@clawbackup-ai/clawbackup-plugin",
   "version": "1.0.0",
   "description": "Enhanced backup plugin - supports encryption, cloud storage, and cross-device recovery",
   "type": "module",
