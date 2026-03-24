@@ -17,6 +17,8 @@
 
 ClawBackup 是一个 OpenClaw 插件，为 OpenClaw 提供增强的备份和恢复功能。支持本地备份、加密备份、S3/OSS 云存储同步等功能。
 
+> **我们的愿景**：让任何 AI Agent 都能在任何地方、从任何时刻开始运行。
+
 ## ✨ 功能特性
 
 - **本地备份** - 备份 OpenClaw 配置、工作区和会话数据
@@ -653,7 +655,7 @@ openclaw clawbackup restore <backup_id> --from-remote my-s3
 
 查看 [CHANGELOG.md](CHANGELOG.md) 了解版本历史和发布说明。
 
-## �📄 许可证
+## �� 许可证
 
 Apache License 2.0
 

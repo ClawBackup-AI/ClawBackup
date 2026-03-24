@@ -17,6 +17,8 @@
 
 ClawBackup is an OpenClaw plugin that provides enhanced backup and recovery capabilities for OpenClaw. It supports local backups, encrypted backups, S3/OSS cloud storage synchronization, and more.
 
+> **Our Vision**: Let any AI Agent run anywhere, from any moment in time.
+
 ## ✨ Features
 
 - **Local Backup** - Backup OpenClaw configuration, workspace, and session data
