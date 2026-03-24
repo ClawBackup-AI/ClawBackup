@@ -6,8 +6,8 @@
 
 **OpenClaw 增强备份插件**
 
-[!\[License\](https://img.shields.io/badge/License-Apache%202.0-blue.svg null)](https://opensource.org/licenses/Apache-2.0)
-[!\[OpenClaw\](https://img.shields.io/badge/OpenClaw-Plugin-green.svg null)](https://github.com/openclaw)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![OpenClaw](https://img.shields.io/badge/OpenClaw-Plugin-green.svg)](https://github.com/openclaw)
 
 [English](README.md) | [中文](README_CN.md)
 
