@@ -649,6 +649,10 @@ Encryption key is saved in `~/.openclaw/clawbackends/.encryption_key`.
 
 ---
 
+## 📝 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history and release notes.
+
 ## 📄 License
 
 Apache License 2.0

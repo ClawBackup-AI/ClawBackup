@@ -649,7 +649,11 @@ openclaw clawbackup restore <backup_id> --from-remote my-s3
 
 ---
 
-## 📄 许可证
+## � 更新日志
+
+查看 [CHANGELOG.md](CHANGELOG.md) 了解版本历史和发布说明。
+
+## �📄 许可证
 
 Apache License 2.0
 
