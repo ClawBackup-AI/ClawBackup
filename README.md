@@ -4,7 +4,7 @@
 
 # ClawBackup
 
-**Enhanced Backup Plugin for OpenClaw**
+**State Versioning for AI Agents**
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![OpenClaw](https://img.shields.io/badge/OpenClaw-Plugin-green.svg)](https://github.com/openclaw)
@@ -15,18 +15,120 @@
 
 ---
 
-ClawBackup is an OpenClaw plugin that provides enhanced backup and recovery capabilities for OpenClaw. It supports local backups, encrypted backups, S3/OSS cloud storage synchronization, and more.
+## The Problem
 
-> **Our Vision**: Let any AI Agent run anywhere, from any moment in time.
+AI agents continuously modify your environment:
+
+- 📝 Memory updates
+- ⚙️ State changes  
+- 📁 Workspace files
+- 🔧 Configs
+- 💾 Sessions
+
+When an agent makes a mistake:
+
+- ❌ Things break
+- 💥 State becomes corrupted
+- 😰 It's hard to go back
+
+**Unlike code, agent state has no version control.**
+
+---
+
+## The Solution
+
+ClawBackup introduces:
+
+> **State versioning for AI agents.**
+
+It records file changes made by agents and lets you:
+
+- ⏪ Roll back in time
+- 🔄 Restore sessions
+- 🛡️ Recover environments
+- 🚀 Move agents between machines
+
+Think of it like:
+
+**Git + Time Machine for AI agents.**
+
+---
+
+## What You Can Do
+
+With ClawBackup you can:
+
+| Feature | Description |
+|---------|-------------|
+| ⏪ **Time Travel** | Roll back 5 minutes, 8 hours, or to any previous session |
+| 🔄 **Session Restore** | Recover broken agent state instantly |
+| 🚀 **Cross-Machine Migration** | Move agents across machines seamlessly |
+| 👀 **Rollback Preview** | See what will change before restoring |
+
+**It makes AI agent experimentation safe.**
+
+---
+
+## Example
+
+Agent breaks the environment:
+
+```
+Agent modifies memory...
+Agent updates config...
+Agent writes incorrect state...
+```
+
+You simply run:
+
+```bash
+openclaw clawbackup snapshot rollback <snapshot_id> --preview
+openclaw clawbackup snapshot rollback <snapshot_id>
+```
+
+**Environment restored.**
+
+---
 
 ## ✨ Features
 
-- **Local Backup** - Backup OpenClaw configuration, workspace, and session data
-- **Encrypted Backup** - Protect sensitive data with AES-256-CBC encryption
-- **Cloud Storage Sync** - Support for S3-compatible storage (AWS S3, Alibaba Cloud OSS, etc.)
-- **Streaming** - Memory-friendly streaming upload/download for large files
-- **Backup Verification** - Verify backup integrity
-- **Snapshot Rollback** - Automatically create snapshots before restore, with rollback support
+### Agent State Tracking
+
+Tracks file changes caused by agents in real time. Includes:
+
+- 📝 Memory updates
+- ⚙️ State changes
+- 📁 Workspace modifications
+- 💾 Session data
+
+### Time Travel Rollback
+
+Restore to:
+
+- ⏪ Minutes ago
+- ⏪ Hours ago
+- ⏪ Previous sessions
+
+### Rollback Preview
+
+See what will change before restoring. This prevents accidental data loss.
+
+### Secure Backup
+
+AES-256 encrypted backups supported.
+
+### Cloud Sync
+
+Supports S3 compatible storage:
+
+- AWS S3
+- Alibaba Cloud OSS
+- Tencent Cloud COS
+- MinIO
+
+### Large Backup Streaming
+
+Efficient transfer without high memory usage.
 
 ## 🚀 Installation
 
@@ -86,8 +188,12 @@ ClawBackup registers the following tools that can be used directly through conve
 | `backup_restore` | Restore backup |
 | `backup_sync` | Sync backup to remote storage |
 | `backup_delete` | Delete backup |
-| `backup_verify` | Verify backup integrity |
-| `backup_status` | Get backup status overview |
+| `backup_verify`  | Verify backup integrity   |
+| `backup_status`  | Get backup status overview |
+| `snapshot_status` | Get snapshot status overview |
+| `snapshot_list` | List snapshots |
+| `snapshot_rollback` | Rollback to snapshot |
+| `snapshot_history` | View file change history |
 
 ### Usage Examples
 
@@ -156,6 +262,21 @@ User: View backup status
 Agent: [calls backup_status tool] Total 5 backups, total size 1.2GB...
 ```
 
+**Snapshot Rollback:**
+```
+User: View snapshot status
+Agent: [calls snapshot_status tool] Total 3 sessions tracked, 15 files modified...
+
+User: List recent snapshots
+Agent: [calls snapshot_list tool] Found 5 snapshots...
+
+User: Rollback to snapshot_20240325_abc123
+Agent: [calls snapshot_rollback tool] Files restored to previous state
+
+User: Show change history for src/index.ts
+Agent: [calls snapshot_history tool] File was modified 3 times in session sess_xxx...
+```
+
 ### Tool Parameters Details
 
 #### `backup_create`
@@ -204,6 +325,31 @@ Agent: [calls backup_status tool] Total 5 backups, total size 1.2GB...
 #### `backup_status`
 
 No parameters.
+
+#### `snapshot_status`
+
+No parameters.
+
+#### `snapshot_list`
+
+| Parameter | Type | Required | Description |
+|------|------|------|------|
+| `session_id` | string | No | Filter by session ID |
+| `limit` | number | No | Return count limit, default 50 |
+
+#### `snapshot_rollback`
+
+| Parameter | Type | Required | Description |
+|------|------|------|------|
+| `snapshot_id` | string | Yes | Snapshot ID to rollback to |
+| `preview` | boolean | No | Show rollback preview without actually rolling back |
+
+#### `snapshot_history`
+
+| Parameter | Type | Required | Description |
+|------|------|------|------|
+| `file_path` | string | Yes | File path to view history for |
+| `session_id` | string | No | Filter by session ID |
 
 ---
 
@@ -561,11 +707,112 @@ Creates default configuration directory and files.
 
 ---
 
+### `openclaw clawbackup snapshot`
+
+Snapshot management for file change tracking and rollback.
+
+```bash
+openclaw clawbackup snapshot [command]
+```
+
+**Subcommands:**
+
+#### `snapshot status` - View snapshot status
+
+```bash
+openclaw clawbackup snapshot status
+```
+
+Output example:
+```
+Snapshot Status:
+  Total Sessions: 3
+  Total Snapshots: 15
+  Storage Used: 2.5 MB
+  Oldest Event: 2024-03-25 10:30:00
+```
+
+#### `snapshot list` - List snapshots
+
+```bash
+openclaw clawbackup snapshot list [options]
+```
+
+**Options:**
+- `--session <id>` - Filter by session ID
+- `--limit <number>` - Limit results (default: 50)
+
+#### `snapshot rollback` - Rollback to snapshot
+
+```bash
+openclaw clawbackup snapshot rollback <snapshot_id> [options]
+```
+
+**Options:**
+- `--preview` - Show rollback preview without actually rolling back
+- `--json` - JSON format output
+
+**Example:**
+```bash
+# Preview rollback
+openclaw clawbackup snapshot rollback snapshot_20240325_abc123 --preview
+
+# Execute rollback
+openclaw clawbackup snapshot rollback snapshot_20240325_abc123
+```
+
+#### `snapshot cleanup` - Cleanup old snapshots
+
+```bash
+openclaw clawbackup snapshot cleanup [options]
+```
+
+**Options:**
+- `--older-than <days>` - Remove snapshots older than N days
+- `--dry-run` - Show what would be cleaned up without actually deleting
+
+---
+
 ## 💾 Storage Backend Configuration
 
 ### Local Storage
 
 Default storage backend, backups are saved in `~/.openclaw/clawbackups/` directory.
+
+### Snapshot Storage
+
+Snapshot data and event logs are saved in `~/.openclaw/clawbackups/snapshots/` directory.
+
+**Storage Structure:**
+```
+~/.openclaw/clawbackups/snapshots/
+├── events/
+│   └── events.jsonl          # Event log (append-only JSONL format)
+└── snapshots/
+    └── snapshot_<id>/
+        └── files/
+            ├── <hash1>       # File content (SHA256 hash as filename)
+            └── <hash2>
+```
+
+**Event Log Format:**
+Each event is a JSON object with the following structure:
+```json
+{
+  "event_id": "evt_xxx",
+  "session_id": "sess_xxx",
+  "timestamp": 1711353600000,
+  "file_path": "/path/to/file",
+  "operation": "UPDATE",
+  "snapshot_id": "snapshot_xxx",
+  "content_hash": "sha256_hash"
+}
+```
+
+**Content Deduplication:**
+Files with identical content share the same snapshot file, reducing storage usage.
+
+---
 
 ### S3 Compatible Storage
 
