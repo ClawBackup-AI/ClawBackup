@@ -1,8 +1,8 @@
 {
   "id": "clawbackup",
   "name": "ClawBackup",
-  "description": "Enhanced backup plugin - supports encryption, cloud storage, and cross-device recovery",
-  "version": "1.0.0",
+  "description": "Enhanced backup plugin - supports encryption, cloud storage, cross-device recovery, and file snapshot rollback",
+  "version": "1.1.0",
   "main": "dist/index.js",
   "author": "ClawBackup Team",
   "license": "Apache-2.0",
@@ -45,6 +45,61 @@
             "description": "Scheduled backup plan (cron format)"
           }
         }
+      },
+      "snapshots": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable file snapshot for rollback"
+          },
+          "filter": {
+            "type": "object",
+            "properties": {
+              "maxFileSize": {
+                "type": "number",
+                "default": 104857600,
+                "description": "Maximum file size to snapshot (bytes), default 100MB"
+              },
+              "excludeExtensions": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "File extensions to exclude from snapshots"
+              },
+              "excludePatterns": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Glob patterns to exclude from snapshots"
+              }
+            }
+          },
+          "retention": {
+            "type": "object",
+            "properties": {
+              "maxTotalSizeMB": {
+                "type": "number",
+                "default": 5000,
+                "description": "Maximum total storage size for snapshots (MB), default 5GB"
+              },
+              "cleanupTriggers": {
+                "type": "object",
+                "properties": {
+                  "onSessionEnd": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Run cleanup on session end"
+                  },
+                  "onStartup": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Run cleanup on startup"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -62,6 +117,16 @@
     "autoBackup.enabled": {
       "label": "Automatic Backup",
       "help": "Automatically create backups on schedule",
+      "sensitive": false
+    },
+    "snapshots.enabled": {
+      "label": "Enable Snapshots",
+      "help": "Automatically create file snapshots before modifications for rollback support",
+      "sensitive": false
+    },
+    "snapshots.retention.maxTotalSizeMB": {
+      "label": "Max Snapshot Storage",
+      "help": "Maximum storage space for snapshots in MB (default: 5000 = 5GB)",
       "sensitive": false
     }
   },
@@ -109,6 +174,26 @@
     {
       "name": "init",
       "description": "Initialize ClawBackup configuration"
+    },
+    {
+      "name": "snapshot",
+      "description": "File snapshot management"
+    },
+    {
+      "name": "snapshot status",
+      "description": "Show snapshot storage status"
+    },
+    {
+      "name": "snapshot list",
+      "description": "List snapshot events"
+    },
+    {
+      "name": "snapshot rollback",
+      "description": "Rollback files to previous state"
+    },
+    {
+      "name": "snapshot cleanup",
+      "description": "Cleanup old snapshots"
     }
   ],
   "tools": [
@@ -139,10 +224,27 @@
     {
       "name": "backup_status",
       "description": "Get backup status overview"
+    },
+    {
+      "name": "snapshot_status",
+      "description": "Get snapshot storage status"
+    },
+    {
+      "name": "snapshot_list",
+      "description": "List snapshot events with optional filters"
+    },
+    {
+      "name": "snapshot_rollback",
+      "description": "Rollback files to a previous state"
+    },
+    {
+      "name": "snapshot_history",
+      "description": "Get detailed history of file modifications"
     }
   ],
   "hooks": [
     "session_start",
-    "session_end"
+    "session_end",
+    "before_tool_call"
   ]
 }

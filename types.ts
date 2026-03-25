@@ -1,7 +1,93 @@
-import type { Platform } from "node:os";
+type Platform = NodeJS.Platform;
 
 export type BackupId = string;
 export type BackupType = "clawbackup" | "native";
+
+export type FileOperationType = "CREATE" | "UPDATE" | "DELETE" | "RENAME";
+
+export type SnapshotCompression = "none" | "gzip";
+
+export interface SnapshotEvent {
+  event_id: string;
+  session_id: string;
+  timestamp: string;
+  operation_type: FileOperationType;
+  file_path: string;
+  snapshot_id: string | null;
+  file_hash: string | null;
+  file_size: number;
+  original_path?: string;
+}
+
+export interface SnapshotRecord {
+  snapshot_id: string;
+  file_hash: string;
+  storage_path: string;
+  size: number;
+  compression: SnapshotCompression;
+  created_at: string;
+  ref_count: number;
+}
+
+export interface SnapshotIndex {
+  schemaVersion: number;
+  updatedAt: string;
+  stats: {
+    totalSnapshots: number;
+    totalSizeBytes: number;
+    totalEvents: number;
+  };
+}
+
+export interface SnapshotConfig {
+  enabled: boolean;
+  filter: {
+    maxFileSize: number;
+    excludeExtensions: string[];
+    excludePatterns: string[];
+  };
+  retention: {
+    maxTotalSizeMB: number;
+    cleanupTriggers: {
+      onSessionEnd: boolean;
+      onStartup: boolean;
+    };
+  };
+  deduplication: {
+    enabled: boolean;
+    hashAlgorithm: "sha256";
+  };
+}
+
+export interface SessionSnapshotTracker {
+  sessionId: string;
+  startedAt: string;
+  recordedFiles: Set<string>;
+}
+
+export interface RollbackOptions {
+  timestamp?: string;
+  sessionId?: string;
+  filePaths?: string[];
+  dryRun?: boolean;
+}
+
+export interface RollbackResult {
+  success: boolean;
+  operations: Array<{
+    filePath: string;
+    action: "restore" | "delete" | "skip";
+    success: boolean;
+    error?: string;
+  }>;
+  rollbackId?: string;
+}
+
+export interface DetectedFileOperation {
+  filePath: string;
+  operationType: FileOperationType;
+  originalPath?: string;
+}
 
 export type BackupAssetKind = "state" | "config" | "credentials" | "workspace" | "agents" | "plugins";
 

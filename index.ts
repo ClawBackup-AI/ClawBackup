@@ -34,6 +34,19 @@ import {
   verifyBackup,
   getBackupStatus,
 } from "./core/backup.js";
+import {
+  initSnapshotHooks,
+  createSnapshotHooks,
+  updateSnapshotConfig,
+} from "./core/snapshot/hooks.js";
+import {
+  setSnapshotToolsStateDir,
+  snapshotStatusToolFactory,
+  snapshotListToolFactory,
+  snapshotRollbackToolFactory,
+  snapshotHistoryToolFactory,
+} from "./tools/snapshot-tools.js";
+import type { SnapshotConfig } from "./types.js";
 
 let serviceStateDir: string = "";
 let defaultAgentDir: string = "";
@@ -100,6 +113,61 @@ const ClawBackupPlugin: OpenClawPluginDefinition = {
           },
         },
       },
+      snapshots: {
+        type: "object",
+        properties: {
+          enabled: {
+            type: "boolean",
+            default: true,
+            description: "Enable file snapshot for rollback",
+          },
+          filter: {
+            type: "object",
+            properties: {
+              maxFileSize: {
+                type: "number",
+                default: 104857600,
+                description: "Maximum file size to snapshot (bytes), default 100MB",
+              },
+              excludeExtensions: {
+                type: "array",
+                items: { type: "string" },
+                description: "File extensions to exclude from snapshots",
+              },
+              excludePatterns: {
+                type: "array",
+                items: { type: "string" },
+                description: "Glob patterns to exclude from snapshots",
+              },
+            },
+          },
+          retention: {
+            type: "object",
+            properties: {
+              maxTotalSizeMB: {
+                type: "number",
+                default: 5000,
+                description: "Maximum total storage size for snapshots (MB), default 5GB",
+              },
+              cleanupTriggers: {
+                type: "object",
+                properties: {
+                  onSessionEnd: {
+                    type: "boolean",
+                    default: true,
+                    description: "Run cleanup on session end",
+                  },
+                  onStartup: {
+                    type: "boolean",
+                    default: true,
+                    description: "Run cleanup on startup",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
   },
 
@@ -113,6 +181,11 @@ const ClawBackupPlugin: OpenClawPluginDefinition = {
         defaultAgentDir = ctx.workspaceDir || "";
         serviceReady = true;
         api.logger.info(`ClawBackup service started, stateDir: ${serviceStateDir}`);
+        
+        const snapshotConfig = (ctx.config as Record<string, unknown>)?.snapshots as Partial<SnapshotConfig> | undefined;
+        initSnapshotHooks(serviceStateDir, snapshotConfig, api.logger);
+        setSnapshotToolsStateDir(serviceStateDir);
+        api.logger.info("Snapshot hooks initialized");
       },
       stop: async () => {
         serviceReady = false;
@@ -405,8 +478,20 @@ const ClawBackupPlugin: OpenClawPluginDefinition = {
     api.registerTool(deleteBackupToolFactory);
     api.registerTool(verifyBackupToolFactory);
     api.registerTool(backupStatusToolFactory);
+    
+    api.registerTool(snapshotStatusToolFactory);
+    api.registerTool(snapshotListToolFactory);
+    api.registerTool(snapshotRollbackToolFactory);
+    api.registerTool(snapshotHistoryToolFactory);
 
     api.logger.info("All tools registered");
+    
+    const snapshotHooks = createSnapshotHooks();
+    api.on("before_tool_call", snapshotHooks.beforeToolCall);
+    api.on("session_start", snapshotHooks.sessionStart);
+    api.on("session_end", snapshotHooks.sessionEnd);
+    
+    api.logger.info("Snapshot hooks registered");
 
     api.registerCli(
       (cliCtx) => {
@@ -538,6 +623,60 @@ const ClawBackupPlugin: OpenClawPluginDefinition = {
           .action(async () => {
             const { initCommand } = await import("./commands/init.js");
             await initCommand({ config, logger, stateDir: resolveStateDir() });
+          });
+
+        const snapshotCmd = root
+          .command("snapshot")
+          .description("File snapshot and rollback management")
+          .action(async () => {
+            const { snapshotStatusCommand } = await import("./commands/snapshot.js");
+            await snapshotStatusCommand({}, { config, logger, stateDir: resolveStateDir() });
+          });
+
+        snapshotCmd
+          .command("status")
+          .description("Show snapshot storage status")
+          .option("--json", "JSON format output")
+          .action(async (options: { json?: boolean }) => {
+            const { snapshotStatusCommand } = await import("./commands/snapshot.js");
+            await snapshotStatusCommand(options, { config, logger, stateDir: resolveStateDir() });
+          });
+
+        snapshotCmd
+          .command("list")
+          .description("List snapshot events")
+          .option("--file <path>", "Filter by file path")
+          .option("--session <id>", "Filter by session ID")
+          .option("--limit <number>", "Limit number of results", parseInt)
+          .option("--json", "JSON format output")
+          .action(async (options: { file?: string; session?: string; limit?: number; json?: boolean }) => {
+            const { snapshotListCommand } = await import("./commands/snapshot.js");
+            await snapshotListCommand(options, { config, logger, stateDir: resolveStateDir() });
+          });
+
+        snapshotCmd
+          .command("rollback")
+          .description("Rollback files to previous state")
+          .option("--session <id>", "Rollback by session ID")
+          .option("--time <timestamp>", "Rollback to timestamp (ISO 8601)")
+          .option("--file <path>", "Rollback specific file")
+          .option("--dry-run", "Preview rollback without executing")
+          .option("--yes", "Skip confirmation prompt")
+          .option("--json", "JSON format output")
+          .action(async (options: { session?: string; time?: string; file?: string; dryRun?: boolean; yes?: boolean; json?: boolean }) => {
+            const { snapshotRollbackCommand } = await import("./commands/snapshot.js");
+            await snapshotRollbackCommand(options, { config, logger, stateDir: resolveStateDir() });
+          });
+
+        snapshotCmd
+          .command("cleanup")
+          .description("Cleanup old snapshots")
+          .option("--orphaned", "Remove orphaned snapshots only")
+          .option("--old-events <days>", "Remove events older than N days", parseInt)
+          .option("--json", "JSON format output")
+          .action(async (options: { orphaned?: boolean; oldEvents?: number; json?: boolean }) => {
+            const { snapshotCleanupCommand } = await import("./commands/snapshot.js");
+            await snapshotCleanupCommand(options, { config, logger, stateDir: resolveStateDir() });
           });
 
         api.logger.info("CLI commands registered");
