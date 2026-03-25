@@ -89,6 +89,12 @@ Agent: [显示回滚预览] 将恢复 3 个文件...
 Agent: [执行回滚] 环境已恢复
 ```
 
+**对话回滚示例：**
+
+![与 Agent 对话回滚](docs/images/snapshot_example1.png)
+
+![回滚结果](docs/images/snapshot_example2.png)
+
 **方式二：通过命令回滚**
 
 ```bash

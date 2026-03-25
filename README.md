@@ -89,6 +89,12 @@ User: Confirm rollback
 Agent: [executes rollback] Environment restored
 ```
 
+**Conversation Rollback Example:**
+
+![Rollback via Agent Conversation](docs/images/snapshot_example1.png)
+
+![Rollback Result](docs/images/snapshot_example2.png)
+
 **Option 2: Rollback via Command**
 
 ```bash
