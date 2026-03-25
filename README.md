@@ -79,10 +79,23 @@ Agent updates config...
 Agent writes incorrect state...
 ```
 
-You simply run:
+**Option 1: Rollback via Conversation**
+
+```
+User: Help me rollback to 10 minutes ago
+Agent: [calls snapshot_rollback tool] Finding snapshots... Found snapshot_20240325_abc123
+Agent: [shows rollback preview] Will restore 3 files...
+User: Confirm rollback
+Agent: [executes rollback] Environment restored
+```
+
+**Option 2: Rollback via Command**
 
 ```bash
+# Preview rollback
 openclaw clawbackup snapshot rollback <snapshot_id> --preview
+
+# Execute rollback
 openclaw clawbackup snapshot rollback <snapshot_id>
 ```
 

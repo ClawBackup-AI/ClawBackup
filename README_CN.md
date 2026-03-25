@@ -79,10 +79,23 @@ Agent 更新了配置...
 Agent 写入了错误状态...
 ```
 
-你只需运行：
+**方式一：通过对话回滚**
+
+```
+用户：帮我回滚到 10 分钟前的状态
+Agent: [调用 snapshot_rollback 工具] 正在查找快照... 找到 snapshot_20240325_abc123
+Agent: [显示回滚预览] 将恢复 3 个文件...
+用户：确认回滚
+Agent: [执行回滚] 环境已恢复
+```
+
+**方式二：通过命令回滚**
 
 ```bash
+# 预览回滚
 openclaw clawbackup snapshot rollback <snapshot_id> --preview
+
+# 执行回滚
 openclaw clawbackup snapshot rollback <snapshot_id>
 ```
 
