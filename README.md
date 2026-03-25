@@ -91,9 +91,9 @@ Agent: [executes rollback] Environment restored
 
 **Conversation Rollback Example:**
 
-![Rollback via Agent Conversation](https://raw.githubusercontent.com/ClawBackup-AI/ClawBackup/master/src/docs/images/snapshot_example1.png)
+![Rollback via Agent Conversation](https://raw.githubusercontent.com/ClawBackup-AI/ClawBackup/master/docs/images/snapshot_example1.png)
 
-![Rollback Result](https://raw.githubusercontent.com/ClawBackup-AI/ClawBackup/master/src/docs/images/snapshot_example2.png)
+![Rollback Result](https://raw.githubusercontent.com/ClawBackup-AI/ClawBackup/master/docs/images/snapshot_example2.png)
 
 **Option 2: Rollback via Command**
 
