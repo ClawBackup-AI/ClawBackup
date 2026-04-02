@@ -40,8 +40,6 @@ const DEFAULT_CONFIG: SnapshotConfig = {
       ".zip", ".tar", ".gz", ".rar", ".7z",
       ".mp4", ".avi", ".mkv", ".mov",
       ".mp3", ".wav", ".flac",
-      ".pdf", ".doc", ".docx", ".xls", ".xlsx",
-      ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".ico",
       ".ttf", ".otf", ".woff", ".woff2",
       ".db", ".sqlite", ".sqlite3",
     ],
@@ -73,12 +71,32 @@ export function getDefaultSnapshotConfig(): SnapshotConfig {
 export function mergeSnapshotConfig(userConfig?: Partial<SnapshotConfig>): SnapshotConfig {
   if (!userConfig) return { ...DEFAULT_CONFIG };
   
+  let excludeExtensions = userConfig.filter?.excludeExtensions ?? [...DEFAULT_CONFIG.filter.excludeExtensions];
+  let excludePatterns = userConfig.filter?.excludePatterns ?? [...DEFAULT_CONFIG.filter.excludePatterns];
+  
+  if (userConfig.filter?.includeExtensions && userConfig.filter.includeExtensions.length > 0) {
+    excludeExtensions = excludeExtensions.filter(
+      (ext) => !userConfig.filter!.includeExtensions!.includes(ext)
+    );
+  }
+  
+  if (userConfig.filter?.additionalExcludeExtensions && userConfig.filter.additionalExcludeExtensions.length > 0) {
+    excludeExtensions = [...excludeExtensions, ...userConfig.filter.additionalExcludeExtensions];
+  }
+  
+  if (userConfig.filter?.additionalExcludePatterns && userConfig.filter.additionalExcludePatterns.length > 0) {
+    excludePatterns = [...excludePatterns, ...userConfig.filter.additionalExcludePatterns];
+  }
+  
   return {
     enabled: userConfig.enabled ?? DEFAULT_CONFIG.enabled,
     filter: {
       maxFileSize: userConfig.filter?.maxFileSize ?? DEFAULT_CONFIG.filter.maxFileSize,
-      excludeExtensions: userConfig.filter?.excludeExtensions ?? DEFAULT_CONFIG.filter.excludeExtensions,
-      excludePatterns: userConfig.filter?.excludePatterns ?? DEFAULT_CONFIG.filter.excludePatterns,
+      excludeExtensions,
+      excludePatterns,
+      includeExtensions: userConfig.filter?.includeExtensions,
+      additionalExcludeExtensions: userConfig.filter?.additionalExcludeExtensions,
+      additionalExcludePatterns: userConfig.filter?.additionalExcludePatterns,
     },
     retention: {
       maxTotalSizeMB: userConfig.retention?.maxTotalSizeMB ?? DEFAULT_CONFIG.retention.maxTotalSizeMB,

@@ -45,6 +45,9 @@ export interface SnapshotConfig {
     maxFileSize: number;
     excludeExtensions: string[];
     excludePatterns: string[];
+    includeExtensions?: string[];
+    additionalExcludeExtensions?: string[];
+    additionalExcludePatterns?: string[];
   };
   retention: {
     maxTotalSizeMB: number;
